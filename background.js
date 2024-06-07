@@ -1,12 +1,12 @@
 chrome.tabs.onCreated.addListener(newTab => {
     if (newTab.url) {
-        defendTabDuplication(newTab.id, newTab.url, newTab.windowId);
+        defendTabDuplication(newTab, newTab.url, newTab.windowId);
     }
 });
 
 chrome.tabs.onUpdated.addListener((updatedTabId, updateInfo, updatedTab) => {
     if (updateInfo.url) {
-        defendTabDuplication(updatedTabId, updateInfo.url, updatedTab.windowId);
+        defendTabDuplication(updatedTab, updateInfo.url, updatedTab.windowId);
     }
 });
 
@@ -18,14 +18,20 @@ function removeFragment(url) {
     return url;
 }
 
-function defendTabDuplication(currentTabId, currentTabUrl, currentWindowId) {
+function defendTabDuplication(currentTab, currentTabUrl, currentWindowId) {
+
     const currentTabUrlWithoutFragment = removeFragment(currentTabUrl);
     chrome.tabs.query({ windowId: currentWindowId }, tabs => {
-        const duplicateTab = tabs.find(tab => tab.id !== currentTabId && removeFragment(tab.url) === currentTabUrlWithoutFragment);
+        const duplicateTab = tabs.find(tab => tab.id !== currentTab.id && removeFragment(tab.url) === currentTabUrlWithoutFragment);
         if (duplicateTab) {
-            chrome.tabs.update(duplicateTab.id, { active: true });
-            chrome.tabs.remove(currentTabId);
+            // pinned tabs privilege
+            if (currentTab.pinned) {
+                chrome.tabs.update(currentTab.id, { active: true });
+                chrome.tabs.remove(duplicateTab.id);
+            } else {
+                chrome.tabs.update(duplicateTab.id, { active: true });
+                chrome.tabs.remove(currentTab.id);
+            }
         }
     });
 }
-
