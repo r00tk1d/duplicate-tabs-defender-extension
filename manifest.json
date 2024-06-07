@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Duplicate Tabs Defender",
+  "version": "1.0",
+  "description": "Detects if a URL is already open in another tab and switches to it.",
+  "permissions": [
+    "tabs"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
