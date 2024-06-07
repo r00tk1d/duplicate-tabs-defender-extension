@@ -1,6 +1,6 @@
 # Duplicate Tabs Defender Chromium Extension
 
-This extension prevents the creation of duplicate tabs. If a url is already present in another tab, it closes the duplicate tab and switches to the already opened tab. The duplication detection scope is one browser window. So if you really want to duplicate a tab, just open it in a new window.
+This extension prevents the creation of duplicate tabs. If a url (without the url fragment) is already present in another tab, it closes the tab and switches to the tab with the asked url. Tab duplication detection applies to each browser window individually. So if you really want to duplicate a tab, just open it in a new window.
 
 ## Installation
 

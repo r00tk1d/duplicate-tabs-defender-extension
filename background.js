@@ -10,9 +10,18 @@ chrome.tabs.onUpdated.addListener((updatedTabId, updateInfo, updatedTab) => {
     }
 });
 
+function removeFragment(url) {
+    const fragmentIndex = url.indexOf('#');
+    if (fragmentIndex !== -1) {
+        return url.slice(0, fragmentIndex);
+    }
+    return url;
+}
+
 function defendTabDuplication(currentTabId, currentTabUrl, currentWindowId) {
+    const currentTabUrlWithoutFragment = removeFragment(currentTabUrl);
     chrome.tabs.query({ windowId: currentWindowId }, tabs => {
-        const duplicateTab = tabs.find(tab => tab.id !== currentTabId && tab.url === currentTabUrl);
+        const duplicateTab = tabs.find(tab => tab.id !== currentTabId && removeFragment(tab.url) === currentTabUrlWithoutFragment);
         if (duplicateTab) {
             chrome.tabs.update(duplicateTab.id, { active: true });
             chrome.tabs.remove(currentTabId);
